@@ -15,7 +15,6 @@ pub struct Settings {
 
 //Public function, constructs the settings struct and calls the actual splitter
 pub fn split(filename: String, chunk_size: usize, output: Option<String>) -> Vec<String> {
-
     //Decides where the output chunks will end up being
     let output_effective = output.unwrap_or_else(|| String::from("Out/"));
 
@@ -34,7 +33,11 @@ pub fn split(filename: String, chunk_size: usize, output: Option<String>) -> Vec
 
 fn split_file_into_chunks(filespecs: &mut Settings) -> Vec<String> {
     //Open the file
-    let mut input_file = OpenOptions::new().read(true).write(false).create(false).open(&filespecs.filename);
+    let mut input_file = OpenOptions::new()
+        .read(true)
+        .write(false)
+        .create(false)
+        .open(&filespecs.filename);
 
     //Initialize the reading buffer with the given size
     let mut buffer = vec![0; filespecs.chunk_size];
@@ -43,17 +46,29 @@ fn split_file_into_chunks(filespecs: &mut Settings) -> Vec<String> {
     loop {
         //File::read only reads until the buffer is full.
         let byte_read = input_file.as_mut().unwrap().read(&mut buffer[..]);
-
         //If everything has been readed, exit
-        match byte_read{
+        match byte_read {
             Ok(0) => break,
-            _ => ()
+            _ => (),
         }
+        let byte_read = byte_read.unwrap();
+        //Needed because if the file is smaller, the buffer has to resized, otherwise the full specified chunk_size is stored.
+        if byte_read <= filespecs.chunk_size {
+            // If smaller, update chunk size to the actual size read
+            buffer.resize(byte_read, 0);
+        }
+
+
+
         //Writes the readed chunk to a new file and pushes the path of the file in a vector
-        filespecs.segment_output_filenames.push(write_into_chunk(&filespecs.output_dir, chunk_index, &buffer));
+        filespecs.segment_output_filenames.push(write_into_chunk(
+            &filespecs.output_dir,
+            chunk_index,
+            &buffer,
+        ));
         chunk_index += 1;
     }
-    return filespecs.segment_output_filenames.clone()
+    return filespecs.segment_output_filenames.clone();
 }
 
 fn write_into_chunk(path: &String, index: usize, buffer: &[u8]) -> String {
