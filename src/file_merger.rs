@@ -8,11 +8,11 @@ pub struct Settings {
     pub output_dir: String
 }
 
-pub fn merge(filename: String, output_dir: String, segment_input_filenames: Vec<String>) -> (){
+pub fn merge(filename: String, output_dir: String, segment_input_filenames: Vec<String>, empty_dir: bool) -> (){
     let merge_settings = Settings{
         filename, output_dir, segment_input_filenames
     };
-    merge_chunks_from_list(merge_settings)
+    merge_chunks_from_list(merge_settings, empty_dir)
 
 }
 fn merge_chunks_from_list(mut merge_settings: Settings, empty_dir: bool){
