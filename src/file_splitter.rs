@@ -26,7 +26,7 @@ pub fn split(filename: String, chunk_size: usize, output: Option<String>) -> Vec
     };
 
     // Creates the output dir
-    fs::create_dir(&output_effective).unwrap();
+    fs::create_dir(&output_effective);
     //Actual call to the splitter
     split_file_into_chunks(&mut settings_struct)
 }
