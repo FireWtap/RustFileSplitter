@@ -17,7 +17,7 @@ pub fn merge(filename: String, output_dir: String, segment_input_filenames: Vec<
 }
 fn merge_chunks_from_list(mut merge_settings: Settings, empty_dir: bool){
     //let mut output = File::create(merge_settings.output_dir.to_string().push_str(&*merge_settings.filename.to_string())).unwrap();\
-    fs::create_dir(&merge_settings.output_dir).expect("Can't create output dir");
+    fs::create_dir(&merge_settings.output_dir);
 
     let output_path:String = format!("{}{}", merge_settings.output_dir, merge_settings.filename);
     //Creates the output file
